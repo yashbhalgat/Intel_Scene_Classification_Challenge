@@ -1,4 +1,5 @@
 import torch
+import torch.hub
 import pretrainedmodels
 import torch.nn as nn
 import torch.utils.data as data
@@ -10,6 +11,7 @@ from PIL import Image
 import os
 import pdb
 import pickle
+from patchwise import Quadrant
 
 class TestImageFolder(data.Dataset):
     def __init__(self, root, transform=None):
@@ -26,6 +28,7 @@ class TestImageFolder(data.Dataset):
         filename = self.imgs[index]
         img = Image.open(os.path.join(self.root, filename))
         if img.layers==1:
+            print(filename)
             img = img.convert('RGB')
         if self.transform is not None:
             img = self.transform(img)
@@ -36,12 +39,13 @@ class TestImageFolder(data.Dataset):
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 
+inp_size = 224
 testdir = "../imgs_resized/test/"
 test_loader = data.DataLoader(
         TestImageFolder(testdir,
                         transforms.Compose([
-                            transforms.Scale(256),
-                            transforms.CenterCrop(224),
+                            transforms.Scale(inp_size),
+                            transforms.CenterCrop(inp_size),
                             transforms.ToTensor(),
                             normalize,
                         ])),
@@ -50,20 +54,9 @@ test_loader = data.DataLoader(
         num_workers=1,
         pin_memory=False)
 
-model = pretrainedmodels.xception(num_classes=1000)
-#model = models.squeezenet1_1()
+model = Quadrant()
+model.load_state_dict(torch.load('best_model_dense161_cutout_patchwise.pt'))
 
-num_ftrs = model.last_linear.in_features
-model.last_linear = nn.Linear(num_ftrs, 6)
-#model.classifier = nn.Sequential(
-#                        nn.Dropout(p=0.5),
-#                        nn.Conv2d(512, 6, kernel_size=1),
-#                        nn.ReLU(inplace=True),
-#                        nn.AdaptiveAvgPool2d((1, 1))
-#                        )
-#model.num_classes = 6
-
-model.load_state_dict(torch.load('best_model_xcep_cutout_full.pt'))
 model.cuda()
 model.eval()
 
@@ -73,13 +66,17 @@ for i, (images, filepath) in enumerate(test_loader):
     filepath = os.path.splitext(os.path.basename(filepath[0]))[0]
     filepath = int(filepath)
     image_var = torch.autograd.Variable(images.cuda(), volatile=True)
+    patch1 = image_var[:,:,0:112, 0:112]
+    patch2 = image_var[:,:,0:112, 113:]
+    patch3 = image_var[:,:,113:, 0:112]
+    patch4 = image_var[:,:,113:, 113:]
     try:
-        y_pred = model(image_var)
+        y_pred = model(patch1, patch2, patch3, patch4)
     except:
         pdb.set_trace()
     pred = y_pred[0].cpu().data.numpy()
     csv_map[filepath] = pred
 
-output = open('../dumps/dump_xcep_cutout_full.pkl', 'wb')
+output = open('../dumps/dump_dense161_cutout_patchwise.pkl', 'wb')
 pickle.dump(csv_map, output)
 output.close()

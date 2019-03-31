@@ -1,4 +1,7 @@
-### Section 1 - First, let's import everything we will be needing.
+###############################################
+# Intel Scene Classification challenge
+# Written by: Yash Sanjay Bhalgat
+###############################################
 
 from __future__ import print_function, division
 import torch
@@ -23,27 +26,11 @@ from torch.utils import data as D
 from albumentations import (
     HorizontalFlip, IAAPerspective, ShiftScaleRotate, CLAHE, RandomRotate90,
     Transpose, ShiftScaleRotate, Blur, OpticalDistortion, GridDistortion, HueSaturationValue,
-    IAAAdditiveGaussianNoise, GaussNoise, MotionBlur, MedianBlur, IAAPiecewiseAffine,
+    IAAAdditiveGaussianNoise, GaussNoise, MotionBlur, MedianBlur, IAAPiecewiseAffine, ChannelShuffle, Cutout,
     IAASharpen, IAAEmboss, RandomContrast, RandomBrightness, Flip, OneOf, Compose
 )
 
-## If you want to keep a track of your network on tensorboard, set USE_TENSORBOARD TO 1 in config file.
-
-if USE_TENSORBOARD:
-    from pycrayon import CrayonClient
-    cc = CrayonClient(hostname=TENSORBOARD_SERVER)
-    try:
-        cc.remove_experiment(EXP_NAME)
-    except:
-        pass
-    foo = cc.create_experiment(EXP_NAME)
-
-
-## If you want to use the GPU, set GPU_MODE TO 1 in config file
-
-use_gpu = GPU_MODE
-if use_gpu:
-    torch.cuda.set_device(CUDA_DEVICE)
+torch.cuda.set_device(CUDA_DEVICE)
 
 count=0
 
@@ -71,6 +58,8 @@ def strong_aug(p=.5):
             RandomBrightness(),
         ], p=0.3),
         HueSaturationValue(p=0.3),
+        ChannelShuffle(),
+        Cutout(num_holes=20, max_h_size=16, max_w_size=16)
     ], p=p)
 
 def augment(aug, image):
@@ -235,22 +224,22 @@ def exp_lr_scheduler(optimizer, epoch, init_lr=BASE_LR, lr_decay_epoch=EPOCH_DEC
 # Set the number of classes in the config file by setting the right value for NUM_CLASSES.
 
 ################ RESNET
-model_ft = models.squeezenet1_1(pretrained=True)
+# model_ft = models.squeezenet1_1(pretrained=True)
 # model_ft = torch.hub.load(
 #     'moskomule/senet.pytorch',
 #     'se_resnet20',
 #     num_classes=6)
-# model_ft = pretrainedmodels.nasnetamobile(num_classes=1000, pretrained='imagenet')
+model_ft = pretrainedmodels.xception(num_classes=1000, pretrained='imagenet')
 # for param in model_ft.parameters():
 #     param.requires_grad = False
 
-model_ft.classifier = nn.Sequential(
-                        nn.Dropout(p=0.5),
-                        nn.Conv2d(512, NUM_CLASSES, kernel_size=1),
-                        nn.ReLU(inplace=True),
-                        nn.AdaptiveAvgPool2d((1, 1))
-                        )
-model_ft.num_classes = NUM_CLASSES
+#model_ft.classifier = nn.Sequential(
+#                        nn.Dropout(p=0.5),
+#                        nn.Conv2d(512, NUM_CLASSES, kernel_size=1),
+#                        nn.ReLU(inplace=True),
+#                        nn.AdaptiveAvgPool2d((1, 1))
+#                        )
+#model_ft.num_classes = NUM_CLASSES
 
 # num_ftrs = model_ft.fc.in_features
 # model_ft.fc = nn.Linear(num_ftrs, NUM_CLASSES)
@@ -258,8 +247,8 @@ model_ft.num_classes = NUM_CLASSES
 # num_ftrs = model_ft.classifier[6].in_features
 # model_ft.classifier[6] = nn.Linear(num_ftrs, NUM_CLASSES)
 
-# num_ftrs = model_ft.last_linear.in_features
-# model_ft.last_linear = nn.Linear(num_ftrs, NUM_CLASSES)
+num_ftrs = model_ft.last_linear.in_features
+model_ft.last_linear = nn.Linear(num_ftrs, NUM_CLASSES)
 
 ################ MobileV2-Net
 # model_ft = MobileNetV2(n_class=1000)
@@ -279,8 +268,8 @@ optimizer_ft = optim.RMSprop(model_ft.parameters(), lr=0.0001)
 
 # Run the functions and save the best model in the function model_ft.
 model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
-                       num_epochs=30)
+                       num_epochs=20)
 
 # Save model
-torch.save(model_ft.state_dict(), 'best_model_squeeze1_1_cutout_aug.pt')
+torch.save(model_ft.state_dict(), 'best_model_xcep_cutout_full.pt')
 # model_ft.save_state_dict('fine_tuned_best_model.pt')

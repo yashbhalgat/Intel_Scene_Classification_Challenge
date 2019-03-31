@@ -9,7 +9,7 @@ NUM_CLASSES = 6 # set the number of classes in your dataset
 DATA_DIR = '../imgs_resized/' # to run with the sample dataset, just set to 'hymenoptera_data'
 
 # DATALOADER PROPERTIES
-BATCH_SIZE = 16 # Set as high as possible. If you keep it too high, you'll get an out of memory error.
+BATCH_SIZE = 4 # Set as high as possible. If you keep it too high, you'll get an out of memory error.
 
 
 ### GPU SETTINGS
