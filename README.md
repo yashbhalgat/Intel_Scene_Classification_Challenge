@@ -77,6 +77,7 @@ ensembling of different trained models.
 - During ensembling, we average the logit outputs of different models and then
 use them to get the predicted labels. In case of usine a single model, we just use the logit outputs (which are already 
 dumped/saved) to compute the predicted labels. This is done using the `create_submission.py` file.
+- `test.py` basically combines these two scripts' functionalities
 
 ## Miscellaneous Scripts
 1. `create_features.py` - There were some other experiments I performed, like using a SVM classifier on top of a trained 
