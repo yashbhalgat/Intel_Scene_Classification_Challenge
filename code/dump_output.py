@@ -1,3 +1,9 @@
+'''
+Intel Scene Classification Challenge 2019
+
+Yash Bhalgat, yashbhalgat95@gmail.com
+'''
+
 import torch
 import pretrainedmodels
 import torch.nn as nn

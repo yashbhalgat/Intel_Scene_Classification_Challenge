@@ -1,7 +1,8 @@
-###############################################
-# Intel Scene Classification challenge
-# Written by: Yash Sanjay Bhalgat
-###############################################
+'''
+Intel Scene Classification Challenge 2019
+
+Yash Bhalgat, yashbhalgat95@gmail.com
+'''
 
 from __future__ import print_function, division
 import torch
@@ -98,8 +99,6 @@ dset_sizes = {x: len(dsets[x]) for x in ['train', 'val']}
 dset_classes = dsets['train'].classes
 
 
-### SECTION 3 : Writing the functions that do training and validation phase. 
-
 def train_model(model, criterion, optimizer, lr_scheduler, num_epochs=100):
     since = time.time()
 
@@ -144,27 +143,16 @@ def train_model(model, criterion, optimizer, lr_scheduler, num_epochs=100):
                 _, preds = torch.max(outputs.data, 1)
                 
                 loss = criterion(outputs, labels)
-                # print('loss done')                
-                # Just so that you can keep track that something's happening and don't feel like the program isn't running.
-                # if counter%10==0:
-                #     print("Reached iteration ",counter)
                 counter+=1
 
                 # backward + optimize only if in training phase
                 if phase == 'train':
-                    # print('loss backward')
                     loss.backward()
-                    # print('done loss backward')
                     optimizer.step()
-                    # print('done optim')
                 # print evaluation statistics
                 try:
-                    # running_loss += loss.data[0]
                     running_loss += loss.item()
-                    # print(labels.data)
-                    # print(preds)
                     running_corrects += torch.sum(preds == labels.data)
-                    # print('running correct =',running_corrects)
                 except:
                     print('unexpected error, could not calculate loss or do a sum.')
             print('trying epoch loss')
@@ -217,13 +205,6 @@ def exp_lr_scheduler(optimizer, epoch, init_lr=BASE_LR, lr_decay_epoch=EPOCH_DEC
     return optimizer
 
 
-### SECTION 4 : DEFINING MODEL ARCHITECTURE.
-
-# We use Resnet18 here. If you have more computational power, feel free to swap it with Resnet50, Resnet100 or Resnet152.
-# Since we are doing fine-tuning, or transfer learning we will use the pretrained net weights. In the last line, the number of classes has been specified.
-# Set the number of classes in the config file by setting the right value for NUM_CLASSES.
-
-################ RESNET
 # model_ft = models.squeezenet1_1(pretrained=True)
 # model_ft = torch.hub.load(
 #     'moskomule/senet.pytorch',
@@ -264,12 +245,8 @@ if use_gpu:
 
 optimizer_ft = optim.RMSprop(model_ft.parameters(), lr=0.0001)
 
-
-
-# Run the functions and save the best model in the function model_ft.
 model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
                        num_epochs=20)
 
 # Save model
 torch.save(model_ft.state_dict(), 'best_model_xcep_cutout_full.pt')
-# model_ft.save_state_dict('fine_tuned_best_model.pt')

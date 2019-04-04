@@ -1,3 +1,9 @@
+'''
+Intel Scene Classification Challenge 2019
+
+Yash Bhalgat, yashbhalgat95@gmail.com
+'''
+
 # Learning rate parameters
 BASE_LR = 0.0001
 EPOCH_DECAY = 5 # number of epochs after which the Learning rate is decayed exponentially.
@@ -11,11 +17,9 @@ DATA_DIR = '../imgs_resized/' # to run with the sample dataset, just set to 'hym
 # DATALOADER PROPERTIES
 BATCH_SIZE = 4 # Set as high as possible. If you keep it too high, you'll get an out of memory error.
 
-
 ### GPU SETTINGS
 CUDA_DEVICE = 0 # Enter device ID of your gpu if you want to run on gpu. Otherwise neglect.
 GPU_MODE = 1 # set to 1 if want to run on gpu.
-
 
 # SETTINGS FOR DISPLAYING ON TENSORBOARD
 USE_TENSORBOARD = 0 #if you want to use tensorboard set this to 1.

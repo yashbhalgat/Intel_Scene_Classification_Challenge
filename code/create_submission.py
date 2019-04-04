@@ -1,3 +1,9 @@
+'''
+Intel Scene Classification Challenge 2019
+
+Yash Bhalgat, yashbhalgat95@gmail.com
+'''
+
 import torch
 import torch.nn as nn
 import numpy as np
@@ -54,19 +60,14 @@ dump10 = pickle.load(pkl_file)
 pkl_file.close()
 
 for fnum in dump0:
-    #avg_arr = (dump0[fnum]+dump1[fnum]+2*dump2[fnum]+dump3[fnum]+6*dump4[fnum]+dump5[fnum]+dump6[fnum]+dump7[fnum]+dump8[fnum]+6*dump9[fnum])/13.0
     avg_arr = (dump4[fnum]+dump5[fnum]+dump6[fnum]+dump7[fnum]+dump8[fnum]+dump9[fnum]+dump10[fnum])/6.0
-    #avg_arr = dump0[fnum]
     y_pred = torch.from_numpy(avg_arr)
     smax = nn.Softmax()
     smax_out = smax(y_pred)
     c = np.argmax(smax_out.data).item()
     csv_map[fnum] = c
-    #print(fnum, ": ", c)
 
-#with open("../submissions/submission_xcep_wrn_full_2_nas_resnext32_6_dense161_res152_v2_full_resnext64_full_res152_incep4_v2_full_fast_3_dn161.csv", 'w') as csvfile:
 with open("../submissions/submission_dense161_cut_res152_v2_full_resnext64_full_res152_incep4_full_fast_dn161_res152_full.csv", 'w') as csvfile:
-#with open("../submissions/submission_xcep_cutout_full.csv", 'w') as csvfile:
     fieldnames = ['image_name', 'label']
     csvfile.write('image_name,label')
     csvfile.write('\n')

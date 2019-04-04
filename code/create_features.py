@@ -1,4 +1,8 @@
-### Section 1 - First, let's import everything we will be needing.
+'''
+Intel Scene Classification Challenge 2019
+
+Yash Bhalgat, yashbhalgat95@gmail.com
+'''
 
 from __future__ import print_function, division
 import torch

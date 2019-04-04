@@ -1,3 +1,9 @@
+'''
+Intel Scene Classification Challenge 2019
+
+Yash Bhalgat, yashbhalgat95@gmail.com
+'''
+
 from fastai.imports import *
 from fastai.transforms import *
 from fastai.conv_learner import *
