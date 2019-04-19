@@ -1,10 +1,3 @@
----
-header-includes:
-  - \hypersetup{colorlinks=true,
-  				allbordercolors={0 0 0},
-            	pdfborderstyle={/S/U/W 1}}
----
-
 # Intel Scene Classification Challenge Report
 
 **Author**: Yash Bhalgat
