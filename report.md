@@ -1,8 +1,6 @@
 # Intel Scene Classification Challenge Report
 
-**Author**: Yash Bhalgat
-
-**Current Position**: Computer Vision and Machine Learning Engineer, Voxel51 Inc.
+**Author**: Yash Bhalgat, Independent Researcher
 
 -------------------------------------------------------------------------------------------------------------
 
