@@ -1,6 +1,6 @@
 # Intel Scene Classification Challenge Report
 
-**Author**: Yash Bhalgat, Independent Researcher
+**Author**: Yash Bhalgat, *Independent Researcher*
 
 -------------------------------------------------------------------------------------------------------------
 
